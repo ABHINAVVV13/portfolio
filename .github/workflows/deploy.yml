@@ -19,6 +19,7 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       S3_BUCKET: ${{ secrets.WEB_S3_BUCKET }}
+      DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,8 +39,8 @@ jobs:
             --acl public-read
 
       - name: Invalidate CloudFront cache
-        if: ${{ secrets.DISTRIBUTION_ID != '' }}
+        if: ${{ env.DISTRIBUTION_ID != '' }}
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.DISTRIBUTION_ID }} \
+            --distribution-id "$DISTRIBUTION_ID" \
             --paths "/*"
