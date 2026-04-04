@@ -1,0 +1,477 @@
+﻿<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Abhinav Putta · Portfolio</title>
+    <script>
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Space Mono", monospace;
+        --fg: #2f2a25;
+        --bg: #fdfaf7;
+        --muted: #8b8175;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-size: 16px;
+      }
+
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: clamp(2rem, 6vw, 6rem) 1.5rem;
+      }
+
+      .hero__inner {
+        max-width: 720px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      h1 {
+        margin: 0;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: clamp(2rem, 6vw, 3.5rem);
+      }
+
+      .tagline {
+        margin: 0;
+        letter-spacing: 0.2em;
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+      }
+
+      .hero__meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      main {
+        width: min(640px, 100%);
+        margin: 0 auto;
+        padding: 0 1.5rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+      }
+
+      .section {
+        padding: 2.75rem 0;
+        text-align: center;
+        border-top: 1px dotted rgba(0, 0, 0, 0.15);
+      }
+
+      .section:first-of-type {
+        border-top: none;
+        padding-top: 0;
+      }
+
+      .section:last-of-type {
+        padding-bottom: 0;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 0.9rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      p,
+      li {
+        font-size: 0.95rem;
+        line-height: 1.75;
+        margin: 0.9rem 0 0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      ul li + li {
+        margin-top: 0.45rem;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .inline-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .inline-links button {
+        border: none;
+        background: none;
+        font: inherit;
+        color: var(--fg);
+        cursor: pointer;
+        padding: 0;
+        letter-spacing: 0.35em;
+      }
+
+      .inline-links button:hover,
+      .inline-links button:focus-visible {
+        text-decoration: underline;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms ease;
+      }
+
+      .modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -40%);
+        width: min(420px, calc(100% - 2rem));
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px dotted rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .modal.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%);
+      }
+
+      .modal h3 {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.35em;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .modal__close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        color: var(--muted);
+      }
+
+      .modal ul {
+        margin: 1rem 0 0;
+        text-align: left;
+        list-style: disc;
+        padding-left: 1.25rem;
+        line-height: 1.6;
+      }
+
+      .role {
+        margin-top: 1.8rem;
+      }
+
+      .role strong {
+        display: block;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+      }
+
+      .meta {
+        font-size: 0.7rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 0.2rem;
+      }
+
+      .skills {
+        max-width: 520px;
+        margin: 1.5rem auto 0;
+        text-align: left;
+        display: grid;
+        gap: 1.1rem;
+      }
+
+      .skill-row {
+        display: grid;
+        gap: 0.2rem;
+      }
+
+      @media (min-width: 540px) {
+        .skill-row {
+          grid-template-columns: auto 1fr;
+          align-items: baseline;
+          column-gap: 1rem;
+        }
+      }
+
+      .skill-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .skill-value {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      .js .reveal.show {
+        opacity: 1;
+        transform: none;
+        transition: opacity 400ms ease, transform 400ms ease;
+      }
+
+      .no-js .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__inner">
+        <h1>Abhinav Reddy Putta</h1>
+        <p class="tagline">SWE SHIPPING TELEHEALTH INFRASTRUCTURE</p>
+        <p class="hero__meta">
+          @   <a href="https://www.fonemed.com/" target="_blank" rel="noopener noreferrer">Fonemed</a>
+        </p>
+      </div>
+    </header>
+
+    <main>
+      <section class="section reveal">
+        <h2>About</h2>
+        <p>Good evening!</p>
+        <p>
+          My name is Abhinav. I'm a software engineer living in Newfoundland, Canada. I enjoy
+          building and tinkering with interesting software ideas.
+        </p>
+        <p>
+          I am interested in system design, application of AI, reverse engineering, and system
+          security. I have greatly enjoyed exploring this space so far, and I think there is plenty
+          left to learn.
+        </p>
+        <p>
+          I'm proud to have worked at Fonemed, shipping software that supports people in times of
+          their medical needs.
+        </p>
+      </section>
+
+      <section class="section reveal">
+        <h2>Contact</h2>
+        <ul>
+          <li>Phone · <a href="tel:17097288295">709 728 8295</a></li>
+          <li>Email · <a href="mailto:arputta@mun.ca">arputta@mun.ca</a></li>
+          <li>
+            LinkedIn ·
+            <a
+              href="https://www.linkedin.com/feed/update/urn:li:activity:7283731510958981121/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Abhinav</a
+            >
+          </li>
+          <li>GitHub · <a href="https://github.com/abhinavvv13">@abhinavvv13</a></li>
+        </ul>
+      </section>
+
+      <section class="section reveal">
+        <div class="inline-links">
+          <button data-modal-target="experience-modal">Experience</button>
+          <span>·</span>
+          <button data-modal-target="education-modal">Education</button>
+          <span>·</span>
+          <button data-modal-target="skills-modal">Skills</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" data-modal-backdrop></div>
+
+    <div class="modal" id="experience-modal" role="dialog" aria-modal="true" aria-labelledby="exp-title">
+      <button class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      <h3 id="exp-title">Experience</h3>
+      <div class="role">
+        <strong>Full Stack Software Developer · Fonemed</strong>
+        <div class="meta">Jan 2025 – Present</div>
+        <ul>
+          <li>Reworked OpenSearch ingestion to trim ~$50K in AWS spend.</li>
+          <li>
+            Delivered report delivery, streaming, and scheduling microservices to support critical
+            telehealth infra needs.
+          </li>
+          <li>
+            Delivered a fully AWS-native, AI-powered telephone intake agent to cut patient wait
+            times.
+          </li>
+        </ul>
+      </div>
+      <div class="role">
+        <strong>Full Stack Developer (Freelance) · Rapido Ride</strong>
+        <div class="meta">July 2025 – Sept 2025</div>
+        <ul>
+          <li>
+            Built real-time WebSocket location updates for the live mobility platform and patched a
+            payments exploit in production.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal" id="education-modal" role="dialog" aria-modal="true" aria-labelledby="edu-title">
+      <button class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      <h3 id="edu-title">Education · Certs</h3>
+      <p>
+        <strong>Memorial University of Newfoundland</strong>
+      </p>
+      <div class="meta">Sept 2021 – May 2026</div>
+      <p>BSc Computer Science (Honors, Machine Learning) · Math minor</p>
+      <p>
+        <a
+          href="https://www.credly.com/badges/b06ddf18-fd56-4e5d-8cbf-1abf3518402b/public_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          >AWS Developer Associate (DVA-C02, 2024–2027)</a
+        >
+      </p>
+      <p>
+        <a
+          href="https://www.credly.com/badges/99ee9fd8-919a-4e61-9efa-b1598c30afa3/public_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          >AWS Solutions Architect Associate (SAA-C03, 2024–2027)</a
+        >
+      </p>
+    </div>
+
+    <div class="modal" id="skills-modal" role="dialog" aria-modal="true" aria-labelledby="skills-title">
+      <button class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      <h3 id="skills-title">Skills & Focus</h3>
+      <div class="skills">
+        <div class="skill-row">
+          <span class="skill-label">Languages :</span>
+          <span class="skill-value">JavaScript · Java · Python · C++</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-label">Cloud :</span>
+          <span class="skill-value">AWS (EC2, Lambda, API Gateway, Step Functions) · Terraform</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-label">Data :</span>
+          <span class="skill-value">PostgreSQL · DynamoDB · MongoDB · Aurora</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-label">Tools :</span>
+          <span class="skill-value">Docker · Kubernetes · Git · Postman</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const sections = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('show');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+
+      const modalButtons = document.querySelectorAll('[data-modal-target]');
+      const modals = document.querySelectorAll('.modal');
+      const backdrop = document.querySelector('[data-modal-backdrop]');
+      const closeButtons = document.querySelectorAll('[data-modal-close]');
+
+      function closeModals() {
+        modals.forEach((modal) => modal.classList.remove('visible'));
+        if (backdrop) backdrop.classList.remove('visible');
+      }
+
+      modalButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.getAttribute('data-modal-target');
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          closeModals();
+          target.classList.add('visible');
+          if (backdrop) backdrop.classList.add('visible');
+        });
+      });
+
+      closeButtons.forEach((btn) => btn.addEventListener('click', closeModals));
+      backdrop?.addEventListener('click', closeModals);
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeModals();
+        }
+      });
+    </script>
+  </body>
+</html>
