@@ -1,0 +1,242 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 101 · AWS-Native Voice Intake</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --fg: #201c18;
+        --bg: #fffcf7;
+        --muted: #6d6359;
+        --accent: #1f7f8c;
+        --border: rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Source Serif 4", serif;
+        line-height: 1.75;
+      }
+
+      header {
+        padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 6vw, 4rem) 1.5rem;
+        text-align: center;
+      }
+
+      header h1 {
+        margin: 0.4rem 0 0.7rem;
+        font-size: clamp(2.3rem, 5vw, 3.7rem);
+        letter-spacing: 0.04em;
+      }
+
+      header p {
+        margin: 0.2rem auto 0;
+        max-width: 760px;
+        color: var(--muted);
+      }
+
+      .meta {
+        font-family: "Space Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 0.4rem;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 5vw, 3rem) 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2.4rem;
+      }
+
+      section {
+        padding: clamp(1.25rem, 3vw, 2.4rem);
+        border: 1px solid var(--border);
+        border-radius: 1.25rem;
+        background: #fff;
+      }
+
+      section h2 {
+        margin: 0 0 0.8rem;
+        font-size: 1.45rem;
+      }
+
+      ul, ol {
+        margin: 0.6rem 0 0;
+        padding-left: 1.2rem;
+      }
+
+      figure {
+        margin: 1.2rem 0 0;
+      }
+
+      figure img {
+        width: 100%;
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+      }
+
+      figure figcaption {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 0.45rem;
+      }
+
+      .grid-two {
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      @media (min-width: 760px) {
+        .grid-two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .callout {
+        border-left: 3px solid var(--accent);
+        padding-left: 1rem;
+        margin-top: 1rem;
+        color: #2d2721;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="meta">AI 101 · Architecture Note</p>
+      <h1>AI 101: How to make a fully AWS-native AI voice intake for enterprises</h1>
+      <p>
+        This write-up is aimed to discuss the architecture of a fully managed enterprise AI voice intake system built entirely on AWS services. 
+      </p>
+      <div class="hero-meta">
+        <span class="meta">By Abhinav Reddy Putta</span>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>Reference diagram</h2>
+        <figure>
+          <img src="/assets/ai_voice_intake.png" alt="AI voice intake architecture diagram" loading="lazy" />
+          <figcaption>AI voice intake topology: Twilio(carrier) → SIP edge tier (public) → app tier (private) → Transcribe / Bedrock / Polly.</figcaption>
+        </figure>
+        <p>
+          The network is one VPC split into two domains:
+        </p>
+        <ul>
+          <li><strong>SIP-aware edge tier (public subnets):</strong> Kamailio + RTP Engine stack that terminates Twilio’s UDP/RTP, enforces allowlists, and keeps redundant SIP servers online across AZs.</li>
+          <li><strong>App tier (private subnets):</strong> LiveKit servers, Redis (ElastiCache or EC2), Python agent, MCP tooling, and the speech/LLM pipeline (Transcribe, Bedrock, Polly).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>SIP-aware edge tier</h2>
+        <div class="grid-two">
+          <div>
+            <h3>What it does</h3>
+            <p>
+              Handles UDP signaling on 5060/61 and wide RTP media ports (10–20k). Each AZ has a SIP server pair behind Kamailio; RTP Engine anchors media so we can record, fork, or rewrite streams before they reach the private tier.
+            </p>
+          </div>
+          <div>
+            <h3>Why public</h3>
+            <p>
+              Carriers need routable IPs. The edge tier is the only part of the deployment exposed to the internet. It rate-limits, enforces verified caller allowlists, and gives us deterministic failover without ever exposing app-tier hosts.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>App tier</h2>
+        <div class="grid-two">
+          <div>
+            <h3>LiveKit cluster</h3>
+            <p>
+              SIP edge forwards traffic into private AZs where LiveKit SIP + LiveKit Server sit alongside the Python agent. LiveKit keeps real-time media sessions stable while exposing WebRTC hooks for the AI stack.
+            </p>
+          </div>
+          <div>
+            <h3>State + tooling</h3>
+            <p>
+              Redis stores session state. Custom MCP server facilitates AI to interact with your backend.
+            </p>
+          </div>
+        </div>
+        <p>
+          Silero VAD gates barge-in detection and keeps audio snippets tight before they hit STT.
+        </p>
+      </section>
+
+      <section>
+        <h2>STT → LLM → TTS pipeline</h2>
+        <ul>
+          <li><strong>Amazon Transcribe:</strong> Streams speech to text with timestamps, handing interim text to the agent.</li>
+          <li><strong>Bedrock (Claude or similar):</strong> Receives transcripts plus tools (OpenSearch, questionnaire rules). Prompts define intake order, red-flag detection, and what to log.</li>
+          <li><strong>Amazon Polly:</strong> Speaks the response back down the LiveKit channel.</li>
+        </ul>
+        <p>
+          Keeping these services separate keeps every tool call auditable. We log prompts, function payloads, and responses for compliance.
+        </p>
+      </section>
+
+      <section>
+        <h2>Why STT→LLM→TTS pipeline over Speech to Speech Modals like Nova Sonic?</h2>
+        <p>
+          While Speech-to-Speech models like Nova Sonic are emerging and designed for low-latency interactions, they are still lack the intelligence and resoning capabilities required for complex enterprise voice intake scenarios.
+        </p>
+        <p>
+           By choosing a modular STT → LLM → TTS pipeline, we can leverage best-in-class services for each step. Also LLMs like claude, ChatGPT have faster rate of improvement with new releases unlike niche modals like Nova Sonic. So it makes sense to rely on a modular architecture where you can swap in and out best LLMS as needed.
+        </p>
+          </section>
+
+      <section>
+        <h2>Putting it together</h2>
+        <ol>
+          <li>Caller hits Twilio → SIP edge. Kamailio checks allowlists and keeps redundant paths per AZ.</li>
+          <li>Edge forwards to LiveKit SIP in private subnets. LiveKit proxies audio to Transcribe.</li>
+          <li>Transcribe text + context go to Bedrock; tool calls fan out to OpenSearch/Florizel.</li>
+          <li>Bedrock response is spoken via Polly, routed back over LiveKit.</li>
+          <li>Redis stores state; S3 keeps transcripts; Lambda automation enriches results for downstream systems.</li>
+        </ol>
+        <p class="callout">
+          The edge absorbs networking pain (UDP ranges, failover). The app tier stays private, pure AWS. Everything in between is just wiring.
+        </p>
+      </section>
+
+      <section>
+        <h2>Call Flow: STT → LLM → TTS</h2>
+        <figure>
+          <img src="/assets/call_flow.png" alt="Call Flow" loading="lazy" />
+        </figure>
+      </section>
+
+      
+    </main>
+  </body>
+</html>

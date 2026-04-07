@@ -1,0 +1,292 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRSE Case Study · Narration vs. Visual Immersion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --fg: #1c1b1a;
+        --bg: #fffcf7;
+        --muted: #6a5f55;
+        --accent: #1c7c92;
+        --accent-soft: rgba(28, 124, 146, 0.08);
+        --border: rgba(108, 96, 86, 0.3);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Source Serif 4", serif;
+        line-height: 1.7;
+      }
+
+      header {
+        padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 8vw, 6rem) 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        text-align: left;
+      }
+
+      .back-link {
+        position: absolute;
+        top: clamp(1.5rem, 4vw, 3rem);
+        left: clamp(1rem, 4vw, 2.5rem);
+        font-family: "Space Mono", monospace;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: var(--muted);
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.35em;
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 0.9rem;
+      }
+
+      h1 {
+        margin: 0 0 1rem;
+        font-size: clamp(2.2rem, 4.6vw, 3.8rem);
+        line-height: 1.2;
+      }
+
+      .lede {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--muted);
+        max-width: 640px;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 clamp(1.5rem, 6vw, 3rem) 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+
+      section {
+        background: white;
+        border-radius: 1rem;
+        padding: clamp(1.5rem, 4vw, 2.8rem);
+        box-shadow: 0 25px 80px rgba(17, 29, 39, 0.07);
+        border: 1px solid var(--border);
+      }
+
+      section h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.35rem;
+      }
+
+      section p {
+        margin: 0.9rem 0 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      figure {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      figure img {
+        width: 100%;
+        border-radius: 0.8rem;
+        border: 1px solid var(--border);
+        background: var(--accent-soft);
+      }
+
+      figcaption {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .highlight {
+        border-left: 3px solid var(--accent);
+        padding-left: 1rem;
+        margin-top: 1rem;
+        font-size: 1.05rem;
+        color: #2f2a25;
+        background: var(--accent-soft);
+      }
+
+      ul, ol {
+        padding-left: 1.3rem;
+        margin: 0.5rem 0 0;
+      }
+
+      .taglist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .tag {
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      footer {
+        text-align: center;
+        font-family: "Space Mono", monospace;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: var(--muted);
+        padding: 1.5rem 1rem 3rem;
+      }
+
+      .callout {
+        background: var(--accent-soft);
+        border-radius: 0.9rem;
+        padding: 1.2rem 1.3rem;
+        border: 1px solid rgba(28, 124, 146, 0.2);
+        margin-top: 1rem;
+      }
+
+      .callout strong {
+        font-family: "Space Mono", monospace;
+        font-size: 0.85rem;
+        letter-spacing: 0.25em;
+        display: block;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      @media (max-width: 640px) {
+        header {
+          text-align: center;
+        }
+        .back-link {
+          position: static;
+          display: inline-block;
+          margin-bottom: 1rem;
+        }
+        .lede {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="back-link" href="/">← Back</a>
+      <p class="eyebrow">CRSE Case Study · April 2026</p>
+      <h1>Narration vs. Visual Immersion · What CRSE Saw</h1>
+      <p class="lede">
+        I worked on a fun experiment over the weekend and wanted to share it. I built a tool called Cognitive Response Similarity Engine (CRSE) on top of Meta TRIBE v2 so I can compare two videos and see how they trigger cognitive signals in the brain.
+      </p>
+      <div class="taglist">
+        <span class="tag">meta tribe v2</span>
+        <span class="tag">video research</span>
+        <span class="tag">product storytelling</span>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>What CRSE does</h2>
+        <p>
+          The repo lives here:
+          <a href="https://github.com/ABHINAVVV13/cognitive-response-similarity-engine" target="_blank" rel="noopener noreferrer">github.com/ABHINAVVV13/cognitive-response-similarity-engine</a>.
+          CRSE lines up two clips, feeds them through TRIBE v2, and gives me a score for how similar their predicted cognitive footprints look.
+        </p>
+        <p>
+          I used it to compare CoLabs Auto Review and Anthropic Claude. Both demos are public: CoLabs on
+          <a href="https://www.youtube.com/watch?v=_mfAecBw5Yw" target="_blank" rel="noopener noreferrer">YouTube</a>
+          and Claude on
+          <a href="https://www.youtube.com/watch?v=Ii99RU3mOJM" target="_blank" rel="noopener noreferrer">YouTube</a>.
+        </p>
+        <p class="highlight">
+          The Auto Review demo appears to engage language and speech related regions more strongly, which fits the fact that it is narrated. The Claude demo appears to drive stronger visual response patterns, with much weaker language related activity, which also makes sense because it is mostly visual and uses music instead of spoken explanation.
+        </p>
+      </section>
+
+      <section>
+        <h2>Differing signals</h2>
+        <p>
+          I thought it was a neat way to compare not just what demos show, but how they may cognitively land depending on whether they rely more on narration, visuals, or both. The heat maps below are the quick snapshots that came out of CRSE.
+        </p>
+        <div class="grid">
+          <figure>
+            <img src="/assets/mean_a.png" alt="Mean activation for CoLabs Auto Review demo" loading="lazy" />
+            <figcaption>Auto Review leans on narration and subtitles so language heavy regions glow warmer.</figcaption>
+          </figure>
+          <figure>
+            <img src="/assets/mean_b.png" alt="Mean activation for Anthropic Claude demo" loading="lazy" />
+            <figcaption>Claude is a visual montage with music so attention areas stay in charge.</figcaption>
+          </figure>
+          <figure>
+            <img src="/assets/mean_diff_a_minus_b.png" alt="Mean activation difference (Auto Review minus Claude)" loading="lazy" />
+            <figcaption>The difference map highlights exactly where narration adds lift versus where visuals dominate.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>Similarity timeline</h2>
+        <p>
+          Both demos have a visual correlation of 0.7, so I would say they are pretty similar on visual activity. At the same time the language heavy beats from Auto Review keep pulling the score down whenever the Claude video stays silent.
+        </p>
+        <figure>
+          <img src="/assets/similarity_results.png" alt="Timeline similarity chart between the two demos" loading="lazy" />
+          <figcaption>CRSE similarity chart. Peaks line up with shared UI close ups, dips happen when narration and music split.</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Audience angle</h2>
+        <p>
+          And honestly the customer reach that each company is aiming for is different. Anthropic Claude and ChatGPT demos aim for general users, they use music in their videos, they have softer animations and tend to leave technical stuff out. They look more playful, if that is the right word.
+        </p>
+        <p>
+          Colab’s demo keeps it technical and to the point. Maybe the aim is to target engineers. CRSE makes that contrast obvious instead of arguing over vibes.
+        </p>
+      </section>
+
+      <section>
+        <h2>Why I am sharing</h2>
+        <p>
+          I think this could be an interesting tool to see how users or customers comprehend or emotionally receive UI, demos, marketing ads, and so on. Feel free to fork the repo, plug in your own videos, and let me know what patterns you see.
+        </p>
+      </section>
+    </main>
+
+    <footer>Built with CRSE · Abhinav Putta</footer>
+  </body>
+</html>

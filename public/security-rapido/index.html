@@ -1,0 +1,236 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Security Research · Rapido Ride SSL Pinning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --fg: #1f1a17;
+        --bg: #fffdf9;
+        --muted: #6f6459;
+        --accent: #b4473d;
+        --border: rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Source Serif 4", serif;
+        line-height: 1.7;
+      }
+
+      header {
+        padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 6vw, 4rem) 1.5rem;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0.4rem 0 0.6rem;
+        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        letter-spacing: 0.03em;
+      }
+
+      header p {
+        margin: 0.4rem auto 0;
+        max-width: 760px;
+        color: var(--muted);
+      }
+
+      .meta-row {
+        font-family: "Space Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.32em;
+        font-size: 0.75rem;
+        color: var(--muted);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        justify-content: center;
+        margin-top: 0.6rem;
+      }
+
+      main {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 0 clamp(1.25rem, 5vw, 3rem) 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      section {
+        padding: clamp(1.25rem, 3vw, 2.3rem);
+        border: 1px solid var(--border);
+        border-radius: 1.2rem;
+        background: #fff;
+      }
+
+      section h2 {
+        margin: 0 0 0.8rem;
+        font-size: 1.35rem;
+      }
+
+      ul,
+      ol {
+        margin: 0.6rem 0 0;
+        padding-left: 1.2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.7rem;
+      }
+
+      th,
+      td {
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        padding: 0.55rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(180, 71, 61, 0.08);
+        font-family: "Space Mono", monospace;
+        letter-spacing: 0.18em;
+        font-size: 0.7rem;
+      }
+
+      .callout {
+        border-left: 3px solid var(--accent);
+        padding-left: 1rem;
+        margin-top: 1rem;
+        color: #2c2622;
+      }
+
+      video {
+        width: min(720px, 100%);
+        aspect-ratio: 16 / 9;
+        height: auto;
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+        display: block;
+        background: #000;
+        margin: 1.2rem auto 0;
+        object-fit: cover;
+      }
+
+      pre {
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 0.75rem;
+        padding: 0.85rem;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="meta-row">Security Research · Responsible Disclosure</div>
+      <h1>How to book a taxi for $0.5 - missing SSL pinning in Rapido Ride</h1>
+      <p>
+        St. John's, NL · Local Taxi app security note.
+      </p>
+      <div class="meta-row">
+        <span>Status: Patched ✓</span>
+      </div>
+      <video src="/assets/ssl-exploit-demo.mp4" autoplay muted loop playsinline controls></video>
+    </header>
+
+    <main>
+      <section>
+        <h2>Background</h2>
+        <p>
+          Rapido Ride is a taxi app serving St. John's, Newfoundland. The mobile client handled payments over HTTPS but lacked SSL pinning, so any user-controlled trust store could silently terminate TLS. I reproduced the issue on an iPhone by installing a custom root CA and routing traffic through Charles Proxy; every Stripe request became readable and editable in real time.
+        </p>
+      </section>
+
+      <section>
+        <h2>Vulnerability snapshot</h2>
+        <table>
+          <tr><th>Vulnerability</th><td>Missing SSL Pinning</td></tr>
+          <tr><th>Attack class</th><td>Payment tampering</td></tr>
+          <tr><th>Processor</th><td>Stripe</td></tr>
+          <tr><th>Status</th><td>Patched</td></tr>
+        </table>
+        <p>
+          Without certificate pinning, a proxy CA-signed certificate is indistinguishable from Stripe's certificate. The app never noticed the MitM.
+        </p>
+      </section>
+
+      <section>
+        <h2>Attack flow</h2>
+        <ol>
+          <li><strong>Intercept.</strong> Charles Proxy terminates TLS and exposes the POST to <code>api.stripe.com/v1/payment_intents</code>.</li>
+          <li><strong>Inspect.</strong> A $15 fare appears as <code>amount=15</code> (dollars) in the body.</li>
+          <li><strong>Modify.</strong> Change <code>amount=15</code> → <code>amount=0.5</code> and forward.</li>
+          <li><strong>Book.</strong> Stripe accepts the fifty-cent PaymentIntent. The app receives a success callback and dispatches a driver for pennies.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Captured requests</h2>
+        <p><strong>Before:</strong></p>
+        <pre>POST /v1/payment_intents HTTP/1.1
+Host: api.stripe.com
+Authorization: Bearer pk_live_xxxxxxxxxxxx
+Content-Type: application/x-www-form-urlencoded
+
+amount=15&currency=cad&payment_method=pm_xxxx&confirm=true</pre>
+        <p><strong>After:</strong></p>
+        <pre>POST /v1/payment_intents HTTP/1.1
+Host: api.stripe.com
+Authorization: Bearer pk_live_xxxxxxxxxxxx
+Content-Type: application/x-www-form-urlencoded
+
+amount=0.5&currency=cad&payment_method=pm_xxxx&confirm=true</pre>
+        <div class="callout">Changed 15 → 0.5. Stripe billed fifty cents; the ride was dispatched.</div>
+      </section>
+
+      <section>
+        <h2>Root cause</h2>
+        <ol>
+          <li><strong>No SSL pinning.</strong> The client trusted any certificate signed by a system root.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Remediation checklist</h2>
+        <ol>
+          <li>Implement certificate pinning (Android <code>network_security_config</code> or OkHttp <code>CertificatePinner</code>; iOS <code>URLSession</code> challenge pinning).</li>
+          <li>Validate the PaymentIntent amount before dispatching a driver (compare against server fare).</li>
+          <li>Add anomaly detection for sub-minimum charges.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Disclosure timeline</h2>
+        <ul>
+          <li><strong>Discovery:</strong> SSL pinning absence confirmed; payment payload manipulation demonstrated.</li>
+          <li><strong>Report:</strong> Full write-up + PoC sent to Rapido Ride.</li>
+          <li><strong>Patch:</strong> Vendor confirmed deployment; testing verified the fix.</li>
+        </ul>
+        <p>No real rides were taken. Testing remained on a personal account with responsible disclosure intent only.</p>
+      </section>
+
+      <section>
+        <h2>Status</h2>
+        <p><strong>Resolved.</strong> Shared here so other teams know exactly how the exploit worked and how to avoid it.</p>
+      </section>
+    </main>
+  </body>
+</html>

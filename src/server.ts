@@ -5,15 +5,33 @@ const server = Bun.serve({
   port,
   async fetch(request) {
     const url = new URL(request.url);
-    const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
-    const file = Bun.file(`public${pathname}`);
-    if (!(await file.exists())) {
+    let pathname = url.pathname === "/" ? "/index.html" : url.pathname;
+    const candidates = new Set([pathname]);
+    if (pathname.endsWith("/")) {
+      candidates.add(`${pathname}index.html`);
+    } else if (!pathname.includes(".")) {
+      candidates.add(`${pathname}/index.html`);
+    }
+
+    let file;
+    let resolvedPath;
+
+    for (const candidate of candidates) {
+      const candidateFile = Bun.file(`public${candidate}`);
+      if (await candidateFile.exists()) {
+        file = candidateFile;
+        resolvedPath = candidate;
+        break;
+      }
+    }
+
+    if (!file) {
       return notFound;
     }
 
     return new Response(file, {
       headers: {
-        "Content-Type": contentType(pathname)
+        "Content-Type": contentType(resolvedPath ?? pathname)
       }
     });
   }

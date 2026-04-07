@@ -1,9 +1,12 @@
-﻿{
+{
   "name": "bun-portfolio",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "bun --watch src/server.ts",
     "start": "bun src/server.ts"
+  },
+  "dependencies": {
+    "@chenglou/pretext": "^0.0.4"
   }
 }

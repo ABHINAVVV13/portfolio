@@ -27,11 +27,18 @@
         box-sizing: border-box;
       }
 
+      html,
       body {
         margin: 0;
         background: var(--bg);
         color: var(--fg);
         font-size: 16px;
+        scrollbar-width: none;
+      }
+
+      body::-webkit-scrollbar,
+      html::-webkit-scrollbar {
+        display: none;
       }
 
       .hero {
@@ -127,6 +134,10 @@
       a:hover {
         text-decoration: underline;
       }
+      a.project-card,
+      a.project-card:hover {
+        text-decoration: none;
+      }
 
       .inline-links {
         display: flex;
@@ -152,6 +163,75 @@
       .inline-links button:hover,
       .inline-links button:focus-visible {
         text-decoration: underline;
+      }
+
+      .scroll-indicator {
+        border: none;
+        background: none;
+        align-self: center;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.85rem;
+        cursor: pointer;
+      }
+
+      .scroll-indicator__chevron {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .scroll-indicator__chevron::after {
+        content: "";
+        width: 12px;
+        height: 12px;
+        border-right: 2px solid rgba(0, 0, 0, 0.5);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+        transform: rotate(45deg);
+        animation: chevronBounce 1.8s ease-in-out infinite;
+      }
+
+      @keyframes chevronBounce {
+        0% {
+          transform: translateY(-3px) rotate(45deg);
+          opacity: 0.4;
+        }
+        50% {
+          transform: translateY(3px) rotate(45deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-3px) rotate(45deg);
+          opacity: 0.4;
+        }
+      }
+
+      .journey-button {
+        border: 1px solid rgba(192, 152, 108, 0.25);
+        background: linear-gradient(135deg, rgba(254, 246, 235, 0.95), rgba(255, 251, 244, 0.85));
+        box-shadow: 0 6px 18px rgba(192, 152, 108, 0.15);
+        color: inherit;
+        font: inherit;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        padding: 0.9rem 2.4rem;
+        margin-top: 2.5rem;
+        cursor: pointer;
+        border-radius: 999px;
+        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+
+      .journey-button:hover,
+      .journey-button:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(192, 152, 108, 0.22);
+        background: linear-gradient(135deg, rgba(255, 253, 248, 0.98), rgba(254, 242, 225, 0.9));
       }
 
       .modal-backdrop {
@@ -271,6 +351,196 @@
         line-height: 1.6;
       }
 
+      .modal--wide {
+        width: min(1180px, calc(100% - 1.5rem));
+        max-height: min(94vh, 820px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal__content {
+        margin-top: 0;
+      }
+
+      .modal--wide .modal__content {
+        margin-top: 0;
+        padding: 0.4rem 0 2rem 0;
+        overflow-y: auto;
+        padding-right: 0.6rem;
+        scrollbar-width: thin;
+      }
+
+      .modal--wide .modal__content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .modal--wide .modal__content::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 999px;
+      }
+
+      .modal-title {
+        margin: -35px 0 0;
+        text-align: center;
+        font-size: 0.95rem;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0.25rem 0 30px;
+      }
+
+      .nerd-gallery {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        text-align: left;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+
+      .project-card {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        padding: 1.1rem;
+        background: rgba(255, 255, 255, 0.98);
+        display: flex;
+        gap: 1rem;
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 140ms ease, box-shadow 140ms ease;
+      }
+
+      .project-card:hover,
+      .project-card:focus-visible {
+        border-color: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+      }
+
+      .project-card__visual {
+        flex: 0 0 86px;
+        width: 86px;
+        height: 86px;
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.04);
+        border: 1px dashed rgba(0, 0, 0, 0.12);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .project-card__visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 14px;
+      }
+
+      .project-card__content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .project-card__visual video {
+        width: 60%;
+        height: 80%;
+        border-radius: 14px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .project-card__eyebrow {
+        margin: 0;
+        font-size: 0.68rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .project-card__title {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .project-card__description {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      .project-card__meta {
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .project-card__meta > div {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .project-card__meta dt {
+        margin: 0;
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .project-card__meta dd {
+        margin: 0.2rem 0 0;
+        font-size: 0.9rem;
+        letter-spacing: 0.04em;
+      }
+
+      .project-card--feature {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .project-card--feature .project-card__visual {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        border: none;
+        background: none;
+      }
+
+      .project-card--feature .project-card__visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        object-fit: cover;
+      }
+
+      .project-card__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 640px) {
+        .project-card {
+          flex-direction: column;
+        }
+
+        .project-card__visual {
+          width: 72px;
+          height: 72px;
+        }
+      }
+
       .js .reveal {
         opacity: 0;
         transform: translateY(24px);
@@ -296,11 +566,14 @@
         <p class="hero__meta">
           @   <a href="https://www.fonemed.com/" target="_blank" rel="noopener noreferrer">Fonemed</a>
         </p>
+        <button class="scroll-indicator" type="button" data-scroll-target="about-section" aria-label="Scroll to about">
+          <span class="scroll-indicator__chevron" aria-hidden="true"></span>
+        </button>
       </div>
     </header>
 
     <main>
-      <section class="section reveal">
+      <section class="section reveal" id="about-section">
         <h2>About</h2>
         <p>Good evening!</p>
         <p>
@@ -316,6 +589,15 @@
           I'm proud to have worked at Fonemed, shipping software that supports people in times of
           their medical needs.
         </p>
+        <button
+          class="journey-button"
+          type="button"
+          data-modal-target="nerd-modal"
+          aria-haspopup="dialog"
+          aria-controls="nerd-modal"
+        >
+          Nerd Section
+        </button>
       </section>
 
       <section class="section reveal">
@@ -336,7 +618,7 @@
         </ul>
       </section>
 
-      <section class="section reveal">
+      <section class="section reveal" id="projects-section">
         <div class="inline-links">
           <button data-modal-target="experience-modal">Experience</button>
           <span>·</span>
@@ -428,6 +710,59 @@
       </div>
     </div>
 
+    <div class="modal modal--wide" id="nerd-modal" role="dialog" aria-modal="true" aria-label="Display Gallery">
+      <button class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      <div class="modal__content">
+        <h3 class="modal-title">Projects &amp; Blogs</h3>
+        <div class="nerd-gallery">
+          <a class="project-card project-card--feature" href="/crse" aria-label="Read Cognitive Response Similarity Engine project">
+            <div class="project-card__visual">
+              <img src="/assets/mean_a.png" alt="CRSE mean activation map" loading="lazy" />
+            </div>
+            <div class="project-card__content">
+              <p class="project-card__eyebrow">Case Study</p>
+              <h4 class="project-card__title">Predicting cognitive responses using Meta TRIBE v2 AI model</h4>
+              <p class="project-card__description">
+                CRSE shows how a video triggers cognitive responses in brain.
+              </p>
+              <span class="project-card__cta">Learn more →</span>
+            </div>
+          </a>
+
+
+
+          <a class="project-card project-card--feature" href="/ai-voice-intake" aria-label="Read AI voice intake architecture write-up">
+            <div class="project-card__visual">
+              <img src="/assets/ai_voice_intake.png" alt="AI voice intake network diagram preview" loading="lazy" />
+            </div>
+            <div class="project-card__content">
+              <p class="project-card__eyebrow">Architecture</p>
+              <h4 class="project-card__title">AI 101: AWS-native voice intake</h4>
+              <p class="project-card__description">
+                How we built a fully managed voice intake agent on AWS using LiveKit, Transcribe, Bedrock, Polly, and SIP servers.
+              </p>
+              <span class="project-card__cta">View architecture →</span>
+            </div>
+          </a>
+
+            <a class="project-card project-card--feature" href="/security-rapido" aria-label="Read Rapido Ride SSL pinning report">
+            <div class="project-card__visual">
+              <video src="/assets/ssl-exploit-demo.mp4" autoplay muted loop playsinline></video>
+            </div>
+            <div class="project-card__content">
+              <p class="project-card__eyebrow">Responsible Disclosure</p>
+              <h4 class="project-card__title">How to book a taxi for $0.5 in St. Johns</h4>
+              <p class="project-card__description">
+                Missing SSL pinning let Stripe payloads be edited mid-flight. Write-up covers the attack chain and how to fix it cleanly.
+              </p>
+              <span class="project-card__cta">Read disclosure →</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
     <script>
       const sections = document.querySelectorAll('.reveal');
       const observer = new IntersectionObserver(
@@ -471,6 +806,17 @@
         if (event.key === 'Escape') {
           closeModals();
         }
+      });
+
+      const scrollTriggers = document.querySelectorAll('[data-scroll-target]');
+      scrollTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+          const targetSelector = trigger.getAttribute('data-scroll-target');
+          if (!targetSelector) return;
+          const target =
+            document.getElementById(targetSelector) || document.querySelector(targetSelector);
+          target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
       });
     </script>
   </body>
